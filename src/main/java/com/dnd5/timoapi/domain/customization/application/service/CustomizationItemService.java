@@ -15,7 +15,10 @@ import com.dnd5.timoapi.domain.customization.exception.CustomizationItemErrorCod
 import com.dnd5.timoapi.domain.customization.presentation.request.CustomizationItemCreateRequest;
 import com.dnd5.timoapi.domain.customization.presentation.request.CustomizationItemImageCreateRequest;
 import com.dnd5.timoapi.domain.customization.presentation.request.CustomizationItemUpdateRequest;
+import com.dnd5.timoapi.domain.customization.presentation.response.AdminCustomizationItemDetailResponse;
+import com.dnd5.timoapi.domain.customization.presentation.response.AdminCustomizationItemResponse;
 import com.dnd5.timoapi.domain.customization.presentation.response.CustomizationItemDetailResponse;
+import com.dnd5.timoapi.domain.customization.presentation.response.CustomizationItemImageResponse;
 import com.dnd5.timoapi.domain.customization.presentation.response.CustomizationItemResponse;
 import com.dnd5.timoapi.domain.customization.presentation.response.EquippedCustomizationResponse;
 import com.dnd5.timoapi.domain.customization.presentation.response.UnlockedCustomizationItemResponse;
@@ -120,6 +123,23 @@ public class CustomizationItemService {
                 entity.toModel(),
                 image != null ? image.image() : null,
                 image != null ? image.imageWithoutBackground() : null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AdminCustomizationItemResponse> findAllForAdmin() {
+        return customizationItemRepository.findAllByDeletedAtIsNull().stream()
+                .map(item -> AdminCustomizationItemResponse.from(item.toModel()))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public AdminCustomizationItemDetailResponse findByIdForAdmin(Long customizationItemId) {
+        CustomizationItemEntity entity = getCustomizationItemEntity(customizationItemId);
+        List<CustomizationItemImageResponse> images = customizationItemImageRepository
+                .findAllByCustomizationItemIdAndDeletedAtIsNull(customizationItemId).stream()
+                .map(imageEntity -> CustomizationItemImageResponse.from(imageEntity.toModel()))
+                .toList();
+        return AdminCustomizationItemDetailResponse.from(entity.toModel(), images);
     }
 
     public void create(CustomizationItemCreateRequest request) {
