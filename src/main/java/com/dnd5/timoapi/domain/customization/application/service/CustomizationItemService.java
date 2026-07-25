@@ -186,6 +186,12 @@ public class CustomizationItemService {
     public void delete(Long customizationItemId) {
         CustomizationItemEntity entity = getCustomizationItemEntity(customizationItemId);
         entity.softDelete();
+
+        customizationUserItemRepository.findAllByCustomizationItemIdAndDeletedAtIsNull(customizationItemId)
+                .forEach(CustomizationUserItemEntity::softDelete);
+
+        customizationItemImageRepository.findAllByCustomizationItemIdAndDeletedAtIsNull(customizationItemId)
+                .forEach(CustomizationItemImageEntity::softDelete);
     }
 
     public void equip(Long userId, Long customizationItemId) {
