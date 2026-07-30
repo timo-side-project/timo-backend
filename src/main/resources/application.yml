@@ -110,8 +110,8 @@ notification:
     webhook-url: ${SWAGGER_DIFF_DISCORD_WEBHOOK_URL:}
   github-issue:
     token: ${TIMO_GITHUB_TOKEN:}
-    owner: timo-side-project
-    repo: timo-frontend
+    owner: ${TIMO_GITHUB_OWNER:timo-side-project}
+    repo: ${TIMO_GITHUB_FRONTEND_REPO:timo-frontend}
 
 fcm:
   enabled: ${FCM_ENABLED:false}
