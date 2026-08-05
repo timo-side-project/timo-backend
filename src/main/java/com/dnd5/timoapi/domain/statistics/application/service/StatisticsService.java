@@ -53,20 +53,25 @@ public class StatisticsService {
                         dataPoints.add(new StatisticsScoreResponse(
                                 testResult.getScore(),
                                 testResult.getCreatedAt(),
-                                "TEST"
+                                "TEST",
+                                null,
+                                null
                         ));
                     }
 
                     List<ReflectionFeedbackEntity> categoryFeedbacks = feedbacksByCategory.getOrDefault(category, List.of());
                     categoryFeedbacks.stream()
                             .filter(fb -> fb.getAfterScore() != null)
-                            .forEach(fb ->
-                                    dataPoints.add(new StatisticsScoreResponse(
-                                            fb.getAfterScore(),
-                                            fb.getCreatedAt(),
-                                            "REFLECTION"
-                                    ))
-                            );
+                            .forEach(fb -> {
+                                ProximityInfo pointProximity = calculateProximity(fb, category.getIdealScore());
+                                dataPoints.add(new StatisticsScoreResponse(
+                                        fb.getAfterScore(),
+                                        fb.getCreatedAt(),
+                                        "REFLECTION",
+                                        pointProximity.proximityRate(),
+                                        pointProximity.isCloserToIdeal()
+                                ));
+                            });
 
                     ReflectionFeedbackEntity latestFeedback = categoryFeedbacks.isEmpty()
                             ? null : categoryFeedbacks.get(categoryFeedbacks.size() - 1);
@@ -102,6 +107,8 @@ public class StatisticsService {
                         testResult.getCreatedAt(),
                         "TEST",
                         null,
+                        null,
+                        null,
                         null
                 )));
 
@@ -110,13 +117,18 @@ public class StatisticsService {
 
         feedbacks.stream()
                 .filter(fb -> fb.getAfterScore() != null)
-                .forEach(fb -> dataPoints.add(new StatisticsScoreDetailResponse(
-                        fb.getAfterScore(),
-                        fb.getCreatedAt(),
-                        "REFLECTION",
-                        fb.getChangedScore(),
-                        fb.getIsIncreased()
-                )));
+                .forEach(fb -> {
+                    ProximityInfo pointProximity = calculateProximity(fb, category.getIdealScore());
+                    dataPoints.add(new StatisticsScoreDetailResponse(
+                            fb.getAfterScore(),
+                            fb.getCreatedAt(),
+                            "REFLECTION",
+                            fb.getChangedScore(),
+                            fb.getIsIncreased(),
+                            pointProximity.proximityRate(),
+                            pointProximity.isCloserToIdeal()
+                    ));
+                });
 
         ReflectionFeedbackEntity latestFeedback = feedbacks.isEmpty() ? null : feedbacks.get(feedbacks.size() - 1);
         ProximityInfo proximity = calculateProximity(latestFeedback, category.getIdealScore());
