@@ -133,6 +133,9 @@ public class StatisticsService {
         );
     }
 
+    private static final double MIN_SCORE = 0;
+    private static final double MAX_SCORE = 5;
+
     private record ProximityInfo(Double changedScore, Double proximityRate, Boolean isCloserToIdeal) {}
 
     private ProximityInfo calculateProximity(ReflectionFeedbackEntity feedback, double idealScore) {
@@ -142,13 +145,11 @@ public class StatisticsService {
 
         double previousDistance = Math.abs(idealScore - feedback.getBeforeScore());
         double currentDistance = Math.abs(idealScore - feedback.getAfterScore());
+        double maxPossibleDistance = Math.max(idealScore - MIN_SCORE, MAX_SCORE - idealScore);
 
-        if (previousDistance == 0) {
-            return new ProximityInfo(feedback.getChangedScore(), null, null);
-        }
-
-        double proximityRate = Math.abs(previousDistance - currentDistance) / previousDistance * 100;
-        boolean isCloserToIdeal = currentDistance < previousDistance;
+        double changeRate = (previousDistance - currentDistance) / maxPossibleDistance * 100;
+        double proximityRate = Math.abs(changeRate);
+        boolean isCloserToIdeal = changeRate > 0;
 
         return new ProximityInfo(feedback.getChangedScore(), proximityRate, isCloserToIdeal);
     }
