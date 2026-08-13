@@ -56,12 +56,13 @@ class GroupReflectionPrivacyServiceTest {
         when(reflection.getDate()).thenReturn(LocalDate.of(2026, 8, 1));
         when(reflectionRepository.findById(reflectionId)).thenReturn(Optional.of(reflection));
 
-        when(groupMemberReflectionPrivateRepository.existsByGroupIdAndReflectionId(groupId, reflectionId)).thenReturn(false);
+        when(groupMemberReflectionPrivateRepository.findByGroupIdAndReflectionId(groupId, reflectionId))
+                .thenReturn(Optional.empty());
 
         try (MockedStatic<SecurityUtil> mocked = Mockito.mockStatic(SecurityUtil.class)) {
             mocked.when(SecurityUtil::getCurrentUserId).thenReturn(userId);
 
-            groupReflectionPrivacyService.setPrivate(groupId, reflectionId);
+            groupReflectionPrivacyService.setPrivacy(groupId, reflectionId, true);
 
             verify(groupMemberReflectionPrivateRepository).save(any(GroupMemberReflectionPrivateEntity.class));
         }
@@ -79,7 +80,7 @@ class GroupReflectionPrivacyServiceTest {
         try (MockedStatic<SecurityUtil> mocked = Mockito.mockStatic(SecurityUtil.class)) {
             mocked.when(SecurityUtil::getCurrentUserId).thenReturn(userId);
 
-            assertThatThrownBy(() -> groupReflectionPrivacyService.setPrivate(groupId, reflectionId))
+            assertThatThrownBy(() -> groupReflectionPrivacyService.setPrivacy(groupId, reflectionId, true))
                     .isInstanceOf(BusinessException.class)
                     .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
                             .isEqualTo(GroupErrorCode.GROUP_ACCESS_DENIED));
@@ -105,7 +106,7 @@ class GroupReflectionPrivacyServiceTest {
         try (MockedStatic<SecurityUtil> mocked = Mockito.mockStatic(SecurityUtil.class)) {
             mocked.when(SecurityUtil::getCurrentUserId).thenReturn(userId);
 
-            assertThatThrownBy(() -> groupReflectionPrivacyService.setPrivate(groupId, reflectionId))
+            assertThatThrownBy(() -> groupReflectionPrivacyService.setPrivacy(groupId, reflectionId, true))
                     .isInstanceOf(BusinessException.class)
                     .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
                             .isEqualTo(ReflectionErrorCode.REFLECTION_NOT_OWNER));
@@ -131,7 +132,7 @@ class GroupReflectionPrivacyServiceTest {
         try (MockedStatic<SecurityUtil> mocked = Mockito.mockStatic(SecurityUtil.class)) {
             mocked.when(SecurityUtil::getCurrentUserId).thenReturn(userId);
 
-            assertThatThrownBy(() -> groupReflectionPrivacyService.setPrivate(groupId, reflectionId))
+            assertThatThrownBy(() -> groupReflectionPrivacyService.setPrivacy(groupId, reflectionId, true))
                     .isInstanceOf(BusinessException.class)
                     .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
                             .isEqualTo(ReflectionErrorCode.REFLECTION_NOT_FOUND));
@@ -154,12 +155,14 @@ class GroupReflectionPrivacyServiceTest {
         when(reflection.getDate()).thenReturn(LocalDate.of(2026, 8, 1));
         when(reflectionRepository.findById(reflectionId)).thenReturn(Optional.of(reflection));
 
-        when(groupMemberReflectionPrivateRepository.existsByGroupIdAndReflectionId(groupId, reflectionId)).thenReturn(true);
+        GroupMemberReflectionPrivateEntity existingPrivateEntity = mock(GroupMemberReflectionPrivateEntity.class);
+        when(groupMemberReflectionPrivateRepository.findByGroupIdAndReflectionId(groupId, reflectionId))
+                .thenReturn(Optional.of(existingPrivateEntity));
 
         try (MockedStatic<SecurityUtil> mocked = Mockito.mockStatic(SecurityUtil.class)) {
             mocked.when(SecurityUtil::getCurrentUserId).thenReturn(userId);
 
-            assertThatThrownBy(() -> groupReflectionPrivacyService.setPrivate(groupId, reflectionId))
+            assertThatThrownBy(() -> groupReflectionPrivacyService.setPrivacy(groupId, reflectionId, true))
                     .isInstanceOf(BusinessException.class)
                     .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
                             .isEqualTo(GroupErrorCode.GROUP_REFLECTION_PRIVATE_ALREADY_EXISTS));
@@ -189,7 +192,7 @@ class GroupReflectionPrivacyServiceTest {
         try (MockedStatic<SecurityUtil> mocked = Mockito.mockStatic(SecurityUtil.class)) {
             mocked.when(SecurityUtil::getCurrentUserId).thenReturn(userId);
 
-            groupReflectionPrivacyService.setPublic(groupId, reflectionId);
+            groupReflectionPrivacyService.setPrivacy(groupId, reflectionId, false);
 
             verify(groupMemberReflectionPrivateRepository).delete(privateEntity);
         }
@@ -217,7 +220,7 @@ class GroupReflectionPrivacyServiceTest {
         try (MockedStatic<SecurityUtil> mocked = Mockito.mockStatic(SecurityUtil.class)) {
             mocked.when(SecurityUtil::getCurrentUserId).thenReturn(userId);
 
-            assertThatThrownBy(() -> groupReflectionPrivacyService.setPublic(groupId, reflectionId))
+            assertThatThrownBy(() -> groupReflectionPrivacyService.setPrivacy(groupId, reflectionId, false))
                     .isInstanceOf(BusinessException.class)
                     .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
                             .isEqualTo(GroupErrorCode.GROUP_REFLECTION_PRIVATE_NOT_FOUND));
@@ -236,7 +239,7 @@ class GroupReflectionPrivacyServiceTest {
         try (MockedStatic<SecurityUtil> mocked = Mockito.mockStatic(SecurityUtil.class)) {
             mocked.when(SecurityUtil::getCurrentUserId).thenReturn(userId);
 
-            assertThatThrownBy(() -> groupReflectionPrivacyService.setPublic(groupId, reflectionId))
+            assertThatThrownBy(() -> groupReflectionPrivacyService.setPrivacy(groupId, reflectionId, false))
                     .isInstanceOf(BusinessException.class)
                     .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
                             .isEqualTo(GroupErrorCode.GROUP_ACCESS_DENIED));

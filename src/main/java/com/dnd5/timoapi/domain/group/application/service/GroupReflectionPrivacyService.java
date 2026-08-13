@@ -10,6 +10,7 @@ import com.dnd5.timoapi.domain.reflection.domain.repository.ReflectionRepository
 import com.dnd5.timoapi.domain.reflection.exception.ReflectionErrorCode;
 import com.dnd5.timoapi.global.exception.BusinessException;
 import com.dnd5.timoapi.global.security.context.SecurityUtil;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,27 +24,23 @@ public class GroupReflectionPrivacyService {
     private final ReflectionRepository reflectionRepository;
     private final GroupMemberReflectionPrivateRepository groupMemberReflectionPrivateRepository;
 
-    public void setPrivate(Long groupId, Long reflectionId) {
+    public void setPrivacy(Long groupId, Long reflectionId, boolean isPrivate) {
         Long userId = SecurityUtil.getCurrentUserId();
         getOwnedGroupReflection(groupId, reflectionId, userId);
 
-        if (groupMemberReflectionPrivateRepository.existsByGroupIdAndReflectionId(groupId, reflectionId)) {
-            throw new BusinessException(GroupErrorCode.GROUP_REFLECTION_PRIVATE_ALREADY_EXISTS);
+        Optional<GroupMemberReflectionPrivateEntity> privateEntity = groupMemberReflectionPrivateRepository
+                .findByGroupIdAndReflectionId(groupId, reflectionId);
+
+        if (isPrivate) {
+            if (privateEntity.isPresent()) {
+                throw new BusinessException(GroupErrorCode.GROUP_REFLECTION_PRIVATE_ALREADY_EXISTS);
+            }
+            groupMemberReflectionPrivateRepository.save(
+                    new GroupMemberReflectionPrivateEntity(groupId, reflectionId));
+        } else {
+            groupMemberReflectionPrivateRepository.delete(
+                    privateEntity.orElseThrow(() -> new BusinessException(GroupErrorCode.GROUP_REFLECTION_PRIVATE_NOT_FOUND)));
         }
-
-        groupMemberReflectionPrivateRepository.save(
-                new GroupMemberReflectionPrivateEntity(groupId, reflectionId));
-    }
-
-    public void setPublic(Long groupId, Long reflectionId) {
-        Long userId = SecurityUtil.getCurrentUserId();
-        getOwnedGroupReflection(groupId, reflectionId, userId);
-
-        GroupMemberReflectionPrivateEntity privateEntity = groupMemberReflectionPrivateRepository
-                .findByGroupIdAndReflectionId(groupId, reflectionId)
-                .orElseThrow(() -> new BusinessException(GroupErrorCode.GROUP_REFLECTION_PRIVATE_NOT_FOUND));
-
-        groupMemberReflectionPrivateRepository.delete(privateEntity);
     }
 
     private ReflectionEntity getOwnedGroupReflection(Long groupId, Long reflectionId, Long userId) {

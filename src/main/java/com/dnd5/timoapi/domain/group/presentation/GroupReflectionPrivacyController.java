@@ -21,17 +21,17 @@ public class GroupReflectionPrivacyController {
 
     private final GroupReflectionPrivacyService groupReflectionPrivacyService;
 
-    @Operation(summary = "내 회고 비공개 설정")
+    @Operation(summary = "내 회고 공개 범위 설정")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void setPrivate(@Positive @PathVariable Long groupId, @Positive @PathVariable Long reflectionId) {
-        groupReflectionPrivacyService.setPrivate(groupId, reflectionId);
+        groupReflectionPrivacyService.setPrivacy(groupId, reflectionId, true);
     }
 
     @Operation(summary = "내 회고 공개 전환")
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void setPublic(@Positive @PathVariable Long groupId, @Positive @PathVariable Long reflectionId) {
-        groupReflectionPrivacyService.setPublic(groupId, reflectionId);
+        groupReflectionPrivacyService.setPrivacy(groupId, reflectionId, false);
     }
 }
