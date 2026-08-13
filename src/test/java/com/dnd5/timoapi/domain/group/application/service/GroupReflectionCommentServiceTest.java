@@ -10,6 +10,7 @@ import com.dnd5.timoapi.domain.group.presentation.request.GroupReflectionComment
 import com.dnd5.timoapi.domain.group.presentation.response.GroupReflectionCommentResponse;
 import com.dnd5.timoapi.domain.reflection.domain.entity.ReflectionEntity;
 import com.dnd5.timoapi.domain.reflection.domain.repository.ReflectionRepository;
+import com.dnd5.timoapi.domain.test.domain.model.enums.ZtpiCategory;
 import com.dnd5.timoapi.domain.user.domain.entity.UserEntity;
 import com.dnd5.timoapi.domain.user.domain.repository.UserRepository;
 import com.dnd5.timoapi.global.exception.BusinessException;
@@ -147,6 +148,7 @@ class GroupReflectionCommentServiceTest {
         UserEntity commenter = mock(UserEntity.class);
         when(commenter.getId()).thenReturn(authorId);
         when(commenter.getNickname()).thenReturn("작성자닉네임");
+        when(commenter.getCategory()).thenReturn(ZtpiCategory.FUTURE);
         when(userRepository.findAllById(anyList())).thenReturn(List.of(commenter));
 
         try (MockedStatic<SecurityUtil> mocked = Mockito.mockStatic(SecurityUtil.class)) {
@@ -157,6 +159,7 @@ class GroupReflectionCommentServiceTest {
             assertThat(result).hasSize(1);
             assertThat(result.get(0).commenterId()).isEqualTo(authorId);
             assertThat(result.get(0).commenterNickname()).isEqualTo("작성자닉네임");
+            assertThat(result.get(0).commenterCategory()).isEqualTo(ZtpiCategory.FUTURE);
             assertThat(result.get(0).content()).isEqualTo("댓글 내용");
         }
     }
