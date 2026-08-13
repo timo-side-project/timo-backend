@@ -65,6 +65,7 @@ public class GroupReflectionCommentService {
                             comment.getId(),
                             comment.getUserId(),
                             commenter != null ? commenter.getNickname() : null,
+                            commenter != null ? commenter.getCategory() : null,
                             comment.getContent(),
                             comment.getCreatedAt()
                     );
