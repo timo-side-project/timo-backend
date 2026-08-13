@@ -27,4 +27,8 @@ public class GroupMemberReflectionCommentEntity extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+
+    public void update(String content) {
+        this.content = content;
+    }
 }
