@@ -20,6 +20,10 @@ public enum GroupErrorCode implements ErrorCode {
     GROUP_CHARACTER_IMMUTABLE(HttpStatus.FORBIDDEN, "캐릭터 그룹은 수정하거나 삭제할 수 없습니다."),
     GROUP_REFLECTION_PRIVATE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 비공개로 설정된 회고입니다."),
     GROUP_REFLECTION_PRIVATE_NOT_FOUND(HttpStatus.NOT_FOUND, "비공개로 설정되지 않은 회고입니다."),
+    GROUP_REFLECTION_LIKE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 좋아요를 누른 회고입니다."),
+    GROUP_REFLECTION_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "좋아요를 찾을 수 없습니다."),
+    GROUP_REFLECTION_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
+    GROUP_REFLECTION_COMMENT_NOT_OWNER(HttpStatus.FORBIDDEN, "댓글 작성자만 수정하거나 삭제할 수 있습니다. (commentId: %s, commentUserId: %s, currentUserId: %s)"),
     ;
 
     private final HttpStatus status;
