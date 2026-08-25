@@ -653,6 +653,8 @@ class GroupServiceTest {
 
         when(groupMemberReflectionPrivateRepository.existsByGroupIdAndReflectionId(groupId, reflectionId)).thenReturn(false);
         when(groupMemberReflectionLikeRepository.countByGroupIdAndReflectionId(groupId, reflectionId)).thenReturn(3L);
+        when(groupMemberReflectionLikeRepository.existsByGroupIdAndReflectionIdAndUserId(groupId, reflectionId, viewerId))
+                .thenReturn(true);
         when(groupMemberReflectionCommentRepository.countByGroupIdAndReflectionIdAndDeletedAtIsNull(groupId, reflectionId))
                 .thenReturn(2L);
 
@@ -663,6 +665,7 @@ class GroupServiceTest {
 
             assertThat(response.content()).isEqualTo("공개 회고 내용");
             assertThat(response.likes()).isEqualTo(3L);
+            assertThat(response.isLiked()).isTrue();
             assertThat(response.comments()).isEqualTo(2L);
         }
     }

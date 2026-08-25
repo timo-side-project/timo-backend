@@ -9,6 +9,7 @@ public record GroupMemberReflectionDetailResponse(
         String content,
         LocalDate reflectedAt,
         long likes,
+        boolean isLiked,
         long comments
 ) {
 }
