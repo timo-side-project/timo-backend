@@ -2,6 +2,7 @@ package com.dnd5.timoapi.domain.group.domain.repository;
 
 import com.dnd5.timoapi.domain.group.domain.entity.GroupMemberReflectionPrivateEntity;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GroupMemberReflectionPrivateRepository extends JpaRepository<GroupMemberReflectionPrivateEntity, Long> {
@@ -9,4 +10,6 @@ public interface GroupMemberReflectionPrivateRepository extends JpaRepository<Gr
     boolean existsByGroupIdAndReflectionId(Long groupId, Long reflectionId);
 
     List<GroupMemberReflectionPrivateEntity> findAllByGroupIdAndReflectionIdIn(Long groupId, List<Long> reflectionIds);
+
+    Optional<GroupMemberReflectionPrivateEntity> findByGroupIdAndReflectionId(Long groupId, Long reflectionId);
 }
