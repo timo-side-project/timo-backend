@@ -259,6 +259,8 @@ public class GroupService {
         String content = (isPrivate && !isOwner) ? null : reflectionEntity.getAnswerText();
 
         long likeCount = groupMemberReflectionLikeRepository.countByGroupIdAndReflectionId(groupId, reflectionId);
+        boolean isLiked = groupMemberReflectionLikeRepository
+                .existsByGroupIdAndReflectionIdAndUserId(groupId, reflectionId, viewerId);
         long commentCount = groupMemberReflectionCommentRepository
                 .countByGroupIdAndReflectionIdAndDeletedAtIsNull(groupId, reflectionId);
 
@@ -268,6 +270,7 @@ public class GroupService {
                 content,
                 reflectionEntity.getDate(),
                 likeCount,
+                isLiked,
                 commentCount
         );
     }
