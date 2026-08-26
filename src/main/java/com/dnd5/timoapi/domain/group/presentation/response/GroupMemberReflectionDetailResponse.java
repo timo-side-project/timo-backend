@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 public record GroupMemberReflectionDetailResponse(
         Long id,
+        String nickname,
         ReflectionQuestionResponse question,
         String content,
         LocalDate reflectedAt,
