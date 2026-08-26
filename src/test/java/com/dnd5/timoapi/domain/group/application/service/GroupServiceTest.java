@@ -651,6 +651,10 @@ class GroupServiceTest {
                 new ReflectionQuestion(200L, 1L, ZtpiCategory.FUTURE, "질문", "admin", null, null));
         when(reflectionQuestionRepository.findById(200L)).thenReturn(Optional.of(question));
 
+        UserEntity author = mock(UserEntity.class);
+        when(author.getNickname()).thenReturn("작성자닉네임");
+        when(userRepository.findByIdAndDeletedAtIsNull(authorId)).thenReturn(Optional.of(author));
+
         when(groupMemberReflectionPrivateRepository.existsByGroupIdAndReflectionId(groupId, reflectionId)).thenReturn(false);
         when(groupMemberReflectionLikeRepository.countByGroupIdAndReflectionId(groupId, reflectionId)).thenReturn(3L);
         when(groupMemberReflectionLikeRepository.existsByGroupIdAndReflectionIdAndUserId(groupId, reflectionId, viewerId))
@@ -664,6 +668,7 @@ class GroupServiceTest {
             GroupMemberReflectionDetailResponse response = groupService.getMemberReflection(groupId, reflectionId);
 
             assertThat(response.content()).isEqualTo("공개 회고 내용");
+            assertThat(response.nickname()).isEqualTo("작성자닉네임");
             assertThat(response.likes()).isEqualTo(3L);
             assertThat(response.isLiked()).isTrue();
             assertThat(response.comments()).isEqualTo(2L);
@@ -695,6 +700,9 @@ class GroupServiceTest {
         when(question.toModel()).thenReturn(
                 new ReflectionQuestion(200L, 1L, ZtpiCategory.FUTURE, "질문", "admin", null, null));
         when(reflectionQuestionRepository.findById(200L)).thenReturn(Optional.of(question));
+
+        UserEntity author = mock(UserEntity.class);
+        when(userRepository.findByIdAndDeletedAtIsNull(authorId)).thenReturn(Optional.of(author));
 
         when(groupMemberReflectionPrivateRepository.existsByGroupIdAndReflectionId(groupId, reflectionId)).thenReturn(true);
 
@@ -732,6 +740,9 @@ class GroupServiceTest {
         when(question.toModel()).thenReturn(
                 new ReflectionQuestion(200L, 1L, ZtpiCategory.FUTURE, "질문", "admin", null, null));
         when(reflectionQuestionRepository.findById(200L)).thenReturn(Optional.of(question));
+
+        UserEntity author = mock(UserEntity.class);
+        when(userRepository.findByIdAndDeletedAtIsNull(userId)).thenReturn(Optional.of(author));
 
         when(groupMemberReflectionPrivateRepository.existsByGroupIdAndReflectionId(groupId, reflectionId)).thenReturn(true);
 

@@ -253,6 +253,9 @@ public class GroupService {
         ReflectionQuestionEntity questionEntity = reflectionQuestionRepository.findById(reflectionEntity.getQuestionId())
                 .orElseThrow(() -> new BusinessException(ReflectionErrorCode.REFLECTION_QUESTION_NOT_FOUND));
 
+        UserEntity authorEntity = userRepository.findByIdAndDeletedAtIsNull(reflectionEntity.getUserId())
+                .orElseThrow(() -> new BusinessException(ReflectionErrorCode.REFLECTION_NOT_FOUND));
+
         boolean isPrivate = groupMemberReflectionPrivateRepository
                 .existsByGroupIdAndReflectionId(groupId, reflectionId);
         boolean isOwner = reflectionEntity.getUserId().equals(viewerId);
@@ -266,6 +269,7 @@ public class GroupService {
 
         return new GroupMemberReflectionDetailResponse(
                 reflectionEntity.getId(),
+                authorEntity.getNickname(),
                 ReflectionQuestionResponse.from(questionEntity.toModel()),
                 content,
                 reflectionEntity.getDate(),
