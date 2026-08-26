@@ -55,6 +55,9 @@ dependencies {
     // Elasticsearch
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
+    // Lucene Nori (Korean morphological analysis)
+    implementation 'org.apache.lucene:lucene-analysis-nori:10.4.0'
+
     // logstash
     implementation 'net.logstash.logback:logstash-logback-encoder:9.0'
 
