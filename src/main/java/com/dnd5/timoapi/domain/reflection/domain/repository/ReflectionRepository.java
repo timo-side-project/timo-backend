@@ -55,4 +55,16 @@ public interface ReflectionRepository extends JpaRepository<ReflectionEntity, Lo
             @Param("date") LocalDate date,
             @Param("userIds") List<Long> userIds);
 
+    @Query("""
+            SELECT r
+            FROM ReflectionEntity r
+            WHERE r.date BETWEEN :start AND :end
+              AND r.userId IN :userIds
+              AND r.deletedAt IS NULL
+            """)
+    List<ReflectionEntity> findAllByDateBetweenAndUserIdIn(
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end,
+            @Param("userIds") List<Long> userIds);
+
 }
