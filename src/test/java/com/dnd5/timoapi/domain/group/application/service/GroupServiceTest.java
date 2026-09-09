@@ -669,6 +669,8 @@ class GroupServiceTest {
 
             assertThat(response.content()).isEqualTo("공개 회고 내용");
             assertThat(response.nickname()).isEqualTo("작성자닉네임");
+            assertThat(response.isMine()).isFalse();
+            assertThat(response.isPublic()).isTrue();
             assertThat(response.likes()).isEqualTo(3L);
             assertThat(response.isLiked()).isTrue();
             assertThat(response.comments()).isEqualTo(2L);
@@ -712,6 +714,8 @@ class GroupServiceTest {
             GroupMemberReflectionDetailResponse response = groupService.getMemberReflection(groupId, reflectionId);
 
             assertThat(response.content()).isNull();
+            assertThat(response.isMine()).isFalse();
+            assertThat(response.isPublic()).isFalse();
         }
     }
 
@@ -752,6 +756,8 @@ class GroupServiceTest {
             GroupMemberReflectionDetailResponse response = groupService.getMemberReflection(groupId, reflectionId);
 
             assertThat(response.content()).isEqualTo("내 비공개 회고");
+            assertThat(response.isMine()).isTrue();
+            assertThat(response.isPublic()).isFalse();
         }
     }
 

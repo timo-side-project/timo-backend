@@ -8,6 +8,8 @@ public record GroupMemberReflectionDetailResponse(
         String nickname,
         ReflectionQuestionResponse question,
         String content,
+        boolean isMine,
+        boolean isPublic,
         LocalDate reflectedAt,
         long likes,
         boolean isLiked,
