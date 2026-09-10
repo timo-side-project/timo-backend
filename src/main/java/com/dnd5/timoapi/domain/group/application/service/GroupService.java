@@ -272,6 +272,8 @@ public class GroupService {
                 authorEntity.getNickname(),
                 ReflectionQuestionResponse.from(questionEntity.toModel()),
                 content,
+                isOwner,
+                !isPrivate,
                 reflectionEntity.getDate(),
                 likeCount,
                 isLiked,
